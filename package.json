@@ -1,0 +1,36 @@
+{
+  "name": "currencyconversionsystem",
+  "version": "1.0.0",
+  "description": "Currency Conversion by processing every request concurrently.",
+  "main": "server.js",
+  "dependencies": {
+    "beanstalkd": "^2.2.0",
+    "body-parser": "^1.18.0",
+    "express": "^4.15.4",
+    "fivebeans": "^1.5.0",
+    "json-format": "^1.0.1",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.31",
+    "osmosis": "^1.1.4",
+    "string-template": "^1.0.0",
+    "util": "^0.10.3",
+    "winston": "^2.3.1",
+    "winston-daily-rotate-file": "^1.7.0",
+    "bluebird": "^3.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/surbhi276/CwIODAkMDQ0FDAMNBAQOCA.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/surbhi276/CwIODAkMDQ0FDAMNBAQOCA/issues"
+  },
+  "homepage": "https://github.com/surbhi276/CwIODAkMDQ0FDAMNBAQOCA#readme"
+}

@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html ng-app='app'>
+
+<head>
+    <title>Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="Css/styling.css" rel="stylesheet" />
+</head>
+
+<body ng-controller='appCtrl'>
+    <div style="width:50%; float:left" class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-primary text-center">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Currency Converter</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-vertical">
+
+                            <div class="form-group">
+                                <label for="" class="labelColor">From currency: *</label>
+                                <select class="form-control" ng-model="fromCurrency" required>
+                                    <option ng-repeat="(k,v) in currencies" ng-value="k">{{k + ' - '+v}}</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="labelColor">To currency: *</label>
+                                <select class="form-control" ng-model="toCurrency" required>
+                                    <option ng-repeat="(k,v) in currencies" ng-value="k">{{k + ' - '+v}}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" ng-show="showRate">
+                                <label class="labelColor">Current Exchange Rate:</label>
+                                <label class="form-control" style="background-color:lightGrey;">1 {{fromCurrency}} = {{showRate}} {{toCurrency}}</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" name="Submit" class="btn-default" ng-click="exchangeCurrency()" />
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width:50%; float:right; opacity:0.8;" class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-primary text-center">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Status of BeanStalkd Jobs in Tube</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-vertical">
+
+                            <div style='background:white;' ng-repeat="(key,value) in stat_Tube_Data">
+                                <md-list>
+                                    <md-list-item>
+                                        <p>{{key}}<span>:          {{value}}</span></p>
+                                    </md-list-item>
+                                </md-list>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../jquery/dist/jquery.min.js"></script>
+<script src="../bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../angular/angular.js"></script>
+<script src="../angular-resource/angular-resource.js"></script>
+<script src="main.js"></script>
+
+</html>
