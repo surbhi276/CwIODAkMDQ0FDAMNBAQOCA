@@ -53,7 +53,7 @@ var logger = new winston.Logger({
       }),
       new (winston.transports.DailyRotateFile)({
       	datePattern: log_file_date_format,
-      	filename: path.dirname(__dirname)+ "/"+ log_folder +"/"+ log_file_name, //'shashi.log',
+      	filename: path.dirname(__dirname)+ "/"+ log_folder +"/"+ log_file_name,
           maxsize: log_file_max_size,
           level: file_log_level,         
           json: false,
@@ -68,7 +68,7 @@ var logger = new winston.Logger({
     ],
     exceptionHandlers: [
       new winston.transports.File({
-      	filename: path.dirname(__dirname) + "/" + log_folder + "/" + exception_file_name //'exceptions.log'
+      	filename: path.dirname(__dirname) + "/" + log_folder + "/" + exception_file_name 
       })
     ],
     exitOnError: false
