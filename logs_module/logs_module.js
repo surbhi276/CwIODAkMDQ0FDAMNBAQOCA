@@ -1,5 +1,5 @@
 ﻿const winston = require("winston");
-const winstonDailyRotateFile = require('winston-daily-rotate-file');
+const winston_daily_rotate_file = require('winston-daily-rotate-file');
 const moment = require("moment");
 const util = require('util');
 const path = require('path');
@@ -9,22 +9,22 @@ const error_module = {
 	"ENOCHANGE": "Log level is already same as asked to change.",
 	"ELOGLEVEL": "Log level is not defined in the list."
 }
-const jsonFormat = require('json-format');
-var logConfig = (function () {	
+const json_format = require('json-format');
+var log_config = (function () {	
 	return JSON.parse(fs.readFileSync('./logs_module/config.js', 'utf-8').replace(/^\uFEFF/, ''));	
 })();
 
-var logFileName = logConfig.logFileName;
-var logFileMaxSize = logConfig.logFileMaxSize;
-var logFileDateFormat = logConfig.logFileDateFormat;
-var exceptionFileName = logConfig.exceptionFileName;
-var consoleLogLevel = logConfig.consoleLogLevel;
-var fileLogLevel = logConfig.fileLogLevel;
-var logFolder = logConfig.logFolder;
-var backupLogFolder = logConfig.backupLogFolder;
+var log_file_name = log_config.log_file_name;
+var log_file_max_size = log_config.log_file_max_size;
+var log_file_date_format = log_config.log_file_date_format;
+var exception_file_name = log_config.exception_file_name;
+var console_log_level = log_config.console_log_level;
+var file_log_level = log_config.file_log_level;
+var log_folder = log_config.log_folder;
+var backup_log_folder = log_config.backup_log_folder;
 
-var syslogConfig = {};
-syslogConfig.levels = {
+var syslog_config = {};
+syslog_config.levels = {
 	none: 0,
 	basic: 1,
 	error: 2,
@@ -38,10 +38,10 @@ syslogConfig.levels = {
 
 //Create custom logger
 var logger = new winston.Logger({
-    levels: syslogConfig.levels,
+    levels: syslog_config.levels,
     transports: [
       new (winston.transports.Console)({
-          level: consoleLogLevel,
+          level: console_log_level,
           json: false,
           timestamp: function () {
           	return (new moment()).format("DD-MMM-YYYY HH:mm:ss");
@@ -52,10 +52,10 @@ var logger = new winston.Logger({
           }
       }),
       new (winston.transports.DailyRotateFile)({
-      	datePattern: logFileDateFormat,
-      	filename: path.dirname(__dirname)+ "/"+ logFolder +"/"+ logFileName, //'shashi.log',
-          maxsize: logFileMaxSize,
-          level: fileLogLevel,         
+      	datePattern: log_file_date_format,
+      	filename: path.dirname(__dirname)+ "/"+ log_folder +"/"+ log_file_name, //'shashi.log',
+          maxsize: log_file_max_size,
+          level: file_log_level,         
           json: false,
           timestamp: function () {
           	return (new moment()).format("DD-MMM-YYYY HH:mm:ss");
@@ -68,15 +68,15 @@ var logger = new winston.Logger({
     ],
     exceptionHandlers: [
       new winston.transports.File({
-      	filename: path.dirname(__dirname) + "/" + logFolder + "/" + exceptionFileName //'exceptions.log'
+      	filename: path.dirname(__dirname) + "/" + log_folder + "/" + exception_file_name //'exceptions.log'
       })
     ],
     exitOnError: false
 });
 
-fs.stat(logFolder, function (err, stats) {
+fs.stat(log_folder, function (err, stats) {
 	if (err || !stats.isDirectory())
-		fs.mkdirAsync(logFolder).then(null, function (err) {
+		fs.mkdirAsync(log_folder).then(null, function (err) {
 			throw new Error(err.message);
 		});
 });
@@ -84,7 +84,7 @@ fs.stat(logFolder, function (err, stats) {
 
 var setConsoleLogLevel = function (logLevel) {
 	var fileName = 'config.js_' + new moment().format("DD-MM-YYYY_HHmmss");
-	var backupPath = path.join(__dirname, backupLogFolder, fileName);
+	var backupPath = path.join(__dirname, backup_log_folder, fileName);
 	
 	return fs.readFileAsync('./logs_module/config.js', 'utf-8').then(function (fileContents) {
 		return JSON.parse(fileContents.replace(/^\uFEFF/, ''));
@@ -94,16 +94,16 @@ var setConsoleLogLevel = function (logLevel) {
 			logger.log('error', errMsg);
 			throw new Error(errMsg);
 		}
-		if (logLevel == config.consoleLogLevel) {
+		if (logLevel == config.console_log_level) {
 			var errMsg = error_module['ENOCHANGE'];
 			logger.log('error', errMsg);
 			throw new Error(errMsg);
 		}		
-		config.consoleLogLevel = logLevel;
+		config.console_log_level = logLevel;
 		logger.transports.console.level = logLevel;
 		return config;
 	}).then(function (config) {		
-		return fs.writeFileAsync('./logs_module/configTemp.js', jsonFormat(config));
+		return fs.writeFileAsync('./logs_module/configTemp.js', json_format(config));
 	}).then(function () {
 		return fs.renameAsync('./logs_module/config.js', backupPath);
 	}).then(function () {
@@ -117,7 +117,7 @@ logger.setConsoleLogLevel = setConsoleLogLevel;
 
 var setFileLogLevel = function (logLevel) {
 	var fileName = 'config.js_' + new moment().format("DD-MM-YYYY_HHmmss");
-	var backupPath = path.join(__dirname, backupLogFolder, fileName);
+	var backupPath = path.join(__dirname, backup_log_folder, fileName);
 
 	return fs.readFileAsync('./logs_module/config.js', 'utf-8').then(function (fileContents) {
 		return JSON.parse(fileContents.replace(/^\uFEFF/, ''));
@@ -127,16 +127,16 @@ var setFileLogLevel = function (logLevel) {
 			logger.log('error', errMsg);
 			throw new Error(errMsg);
 		}
-		if (logLevel == config.fileLogLevel) {
+		if (logLevel == config.file_log_level) {
 			var errMsg = error_module['ENOCHANGE'];
 			logger.log('error', errMsg);
 			throw new Error(errMsg);
 		}
-		config.fileLogLevel = logLevel;
+		config.file_log_level = logLevel;
 		logger.transports.dailyRotateFile.level = logLevel;
 		return config;
 	}).then(function (config) {
-		return fs.writeFileAsync('./logs_module/configTemp.js', jsonFormat(config));
+		return fs.writeFileAsync('./logs_module/configTemp.js', json_format(config));
 	}).then(function () {
 		return fs.renameAsync('./logs_module/config.js', backupPath);
 	}).then(function () {

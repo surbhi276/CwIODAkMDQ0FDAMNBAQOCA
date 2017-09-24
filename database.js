@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const mongo_client = require('mongodb').MongoClient;
 const logger = require('./logs_module/logs_module.js');
 const app_config = require('./app_config');
-var mongo_URL = 'mongodb://'+app_config.getConfig('mongoServer').host+':'+app_config.getConfig('mongoServer').port+'/'+app_config.getConfig('mongoServer').db_name;
+var mongo_URL = 'mongodb://'+app_config.getConfig('mongo_server').host+':'+app_config.getConfig('mongo_server').port+'/'+app_config.getConfig('mongo_server').db_name;
 
 var connect = mongo_client.connect(mongo_URL, { server: { poolSize: 50 } }).then(function (db) {
     logger.log('detailed', 'Connection established to mongo server', { mongo_URL : mongo_URL});
@@ -22,7 +22,7 @@ function saveToMongo(data) {
     logger.log('detailed', 'Entering to saveToMongo() function with ', { data : data});
     return new Promise(function (resolve, reject) {
         connect.then(function (db) {
-            var collection = db.collection(app_config.getConfig('mongoServer').collection_name);
+            var collection = db.collection(app_config.getConfig('mongo_server').collection_name);
             var rateToSave = {
                 "from": data[1].from,
                 "to": data[1].to,

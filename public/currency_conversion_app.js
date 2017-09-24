@@ -1,43 +1,38 @@
 ﻿(function () {
     'use strict';
-    var app = angular.module('app', ['ngResource']);
+    var currency_conversion_app = angular.module('currency_conversion_app', ['ngResource']);
 
-    app.controller('appCtrl', ['$scope', '$resource', '$timeout', function (scope, $resource, $timeout) {
+    currency_conversion_app.controller('currency_conversion_ctrl', ['$scope', '$resource', '$timeout', function (scope, $resource, $timeout) {
         // Fetch exchange rate data from api
         $.getJSON("http://openexchangerates.org/api/currencies.json", function (data) {
-            console.log(data)
             scope.currencies = data;
             scope.$apply();
         });
 
         //Calculate and output the new amount
         scope.exchangeCurrency = function () {
-            console.log(scope)
             if (!(scope.fromCurrency && scope.toCurrency)) {
                 alert('Select both Currencies');
                 return;
             }
             $resource('/exchangeRates').save({ from: scope.fromCurrency, to: scope.toCurrency }, function (res) {
-                console.log(res);
                 scope.showRate = res.result[0];
             });
         }
 
-
-        scope.click = function (name) {
-            $resource('/' + name).query({ jobid: scope.jobid, delay: scope.delay, payload: { name: "surbhi" } }, function (data) {
+        scope.stats_tube = function () {
+            $resource('/stats_tube').query({}, function (data) {
                 scope.stat_Tube_Data = data[0];
-                console.log(scope.stat_Tube_Data);
             }, function (err) {
                 console.log(err);
             })
         }
 
-        function refreshApi() {
-            scope.click('stats_tube')
-            $timeout(refreshApi, 5000);
+        function refresh() {
+            scope.stats_tube();
+            $timeout(refresh, 5000);
         }
-        refreshApi();
+        refresh();
     }]);
 
 })();

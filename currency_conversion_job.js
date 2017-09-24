@@ -50,6 +50,11 @@ function findExchangeRate(rate_request) {
    logger.log('detailed','Entering to findExchangeRate() function with ',{data : rate_request , time : new Date()});
     return new Promise(function (resolve, reject) {
         var cnt = 0;
+        if(!(rate_request.from || rate_request.to)){
+            logger.log('error','From/To currency is/are missing');
+            return resolve(['err',rate_request]);
+        }
+        extractCurrencyData();
         function extractCurrencyData() {
             osmosis.get(format(currency_converter_API, {
                 from: rate_request.from,
@@ -57,7 +62,7 @@ function findExchangeRate(rate_request) {
             })).set({
                 'data': currency_rate
             }).data(function (data) {
-                if (data.data) data.data = Number(data.data).toFixed(app_config.getConfig('fixed_decimal_value'));
+                if (data.data) data.data = Number(data.data).toFixed(app_config.getConfig('exchange_rate_fixed_decimal_value'));
                 resolve([data.data, rate_request]);
             }).error(function (e) {
                 cnt++;
@@ -68,7 +73,6 @@ function findExchangeRate(rate_request) {
                      setTimeout(extractCurrencyData,app_config.getConfig('exchange_rate_failed_wait_duration'));
             });
         }
-        extractCurrencyData();
     });
 }
 module.exports.findExchangeRate = findExchangeRate;
