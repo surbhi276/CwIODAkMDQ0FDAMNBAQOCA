@@ -12,6 +12,7 @@ var port = app_config.getConfig("server_port");
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + '/bower_components'));
 
+// ExchangeRate Api to get the data of rates.
 app.post('/exchangeRates', function (req, res) {
     logger.log('basic','Entering to the Exchange Rate API with ',{data: req.body});
     var obj = { from: req.body.from, to: req.body.to, counter: 1 };
@@ -22,55 +23,7 @@ app.post('/exchangeRates', function (req, res) {
     });
 });
 
-// app.get('/list_tube_used', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.list_tube_used(function (err, tubename) {
-//             res.send([tubename]);
-//         });
-//     });
-// });
-// app.get('/put', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.put(1, req.query.delay, 100, JSON.stringify(req.query.payload), function (err, jobid) {
-//             res.send([jobid]);
-//         });
-//     });
-// });
-// app.get('/peek_ready', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.peek_ready(function (err, jobid, payload) {
-//             res.send([{ jobid: jobid, payload: payload }]);
-//         });
-//     });
-// });
-// app.get('/reserve', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.reserve(function (err, jobid, payload) {
-//             res.send([{ jobid: jobid, payload: payload }]);
-//         });
-//     });
-// });
-// app.get('/destroy', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.destroy(req.query.jobid, function (err) {
-//             res.send([req.query.jobid]);
-//         });
-//     });
-// });
-// app.get('/peek', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.peek(function (err, jobid, payload) {
-//             res.send([{ jobid: jobid, payload: payload }]);
-//         });
-//     });
-// });
-// app.get('/stats_job', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.stats_job(req.query.jobid, function (err, response) {
-//             res.send([response]);
-//         });
-//     });
-// });
+//stats_tube Api to get the status of Tube used in beanstalkd server.
 app.get('/stats_tube', function (req, res) {
     currency_conversion_job.beanstalkdConnection().then(function (conn) {
         conn.stats_tube(app_config.getConfig('beanstalkd_server').tube, function (err, response) {
@@ -78,20 +31,6 @@ app.get('/stats_tube', function (req, res) {
         });
     });
 });
-// app.get('/stats', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.stats(function (err, response) {
-//             res.send([response]);
-//         });
-//     });
-// });
-// app.get('/release', function (req, res) {
-//     currency_conversion_job.beanstalkdConnection().then(function (conn) {
-//         conn.release(jobid, priority, delay, function (err) {
-//             res.send(err || null);
-//         });
-//     });
-// });
 
 var workers = app_config.getConfig("no_of_processes") || process.env.WORKERS || require('os').cpus().length;
 

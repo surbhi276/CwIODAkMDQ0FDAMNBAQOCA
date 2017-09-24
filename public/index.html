@@ -37,6 +37,10 @@
                                 <label class="labelColor">Current Exchange Rate:</label>
                                 <label class="form-control" style="background-color:lightGrey;">1 {{fromCurrency}} = {{showRate}} {{toCurrency}}</label>
                             </div>
+                            <div  ng-if="error" style='background:white;'>
+                                <span>{{error}}</span>
+                            </div>
+                            
                             <div class="form-group">
                                 <input type="submit" name="Submit" class="btn-default" ng-click="exchangeCurrency()" />
                             </div>

@@ -13,7 +13,7 @@ var beanstalkd_tube = app_config.getConfig('beanstalkd_server').tube;
 var beanstalkd_client = null;
 var beanstalkd_connection_exist = false;
 
-
+// connecting with beanstalkd server.
 function beanstalkdConnection() {
     return new Promise(function (resolve, reject) {
         if (beanstalkd_connection_exist)
@@ -46,11 +46,15 @@ function beanstalkdConnection() {
 }
 module.exports.beanstalkdConnection = beanstalkdConnection
 
+
+/*function used to get the rates of currencies with 
+inputs :- rate_request: (type :- object)
+*/
 function findExchangeRate(rate_request) {
    logger.log('detailed','Entering to findExchangeRate() function with ',{data : rate_request , time : new Date()});
     return new Promise(function (resolve, reject) {
         var cnt = 0;
-        if(!(rate_request.from || rate_request.to)){
+        if(!rate_request.from || !rate_request.to){
             logger.log('error','From/To currency is/are missing');
             return resolve(['err',rate_request]);
         }
@@ -77,6 +81,9 @@ function findExchangeRate(rate_request) {
 }
 module.exports.findExchangeRate = findExchangeRate;
 
+/*function used to scheduling the job in beanstalkd server with
+input : - rate_request: (type :- object),delay(optional) :(type :- number)
+*/
 function schedulingJob(rate_request, delay) {
     logger.log('detailed','Entering to schedulingJob() function with ',{data : rate_request , delay : delay , time : new Date()});
     return new Promise(function (resolve, reject) {
@@ -97,6 +104,8 @@ function schedulingJob(rate_request, delay) {
 }
 module.exports.schedulingJob = schedulingJob;
 
+/*function used to process the job in beanstalkd server as according to the requirements
+*/
 function processingQueueJob() {
     logger.log('detailed','Entering to processingQueueJob() function',{ time : new Date()});
     beanstalkdConnection().then(function (client) {
@@ -110,13 +119,13 @@ function processingQueueJob() {
             var payload_obj = JSON.parse(payload);
             findExchangeRate(payload_obj).then(function (rates) {
                 if(rates[0] == 'err'){
-                    destroy(jobid);
+                    destroyJob(jobid);
                     processingQueueJob();
                     return;
                 }
                 database.saveToMongo(rates).then(function (status) {
                     logger.log('detailed','Data has been saved in Mongo database ',{data : rates});
-                    destroy(jobid);
+                    destroyJob(jobid);
                     payload_obj.counter++;
                     if (payload_obj.counter <= app_config.getConfig('exchange_rate_successful_retry_count')) {
                         schedulingJob(payload_obj, app_config.getConfig('success_wait_duration')).then(function () {
@@ -134,18 +143,24 @@ function processingQueueJob() {
 }
 module.exports.processingQueueJob = processingQueueJob;
 
-function destroy(jobid) {
+/*function used to destroy the job in beanstalkd server with 
+input jobid : (type :- number)
+*/
+function destroyJob(jobid) {
     logger.log('detailed','Entering to destroyJob() function',{ time : new Date()});
     beanstalkdConnection().then(function (client) {
         client.destroy(jobid, function (err) {
             if (err) {
                 logger.log('error','Error while destroying the job ',{ error : err ,jobid : jobid , time : new Date()});
-                setTimeout(destroy, 2000, jobid);
+                setTimeout(destroyJob, 2000, jobid);
             }
         });
     });
 }
+module.exports.destroyJob = destroyJob;
 
+/*function used to kill beanstalkd server
+*/
 function killQueueConnection() {
     logger.log('detailed','Entering to killQueueConnection() function',{ time : new Date()});
     beanstalkdConnection().then(function (client) {

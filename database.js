@@ -18,6 +18,11 @@ var connect = mongo_client.connect(mongo_URL, { server: { poolSize: 50 } }).then
     logger.log('error', 'Error in connecting to mongo URL:', {error : err , mongo_URL : mongo_URL});
 });
 
+
+/*function used to save the data of currency exchange rates in mongo db
+inputs :-  rates, from currency ,  to currency ,  timestamp ,  counter ,(type :- array)
+output :- saved/notsaved
+*/
 function saveToMongo(data) {
     logger.log('detailed', 'Entering to saveToMongo() function with ', { data : data});
     return new Promise(function (resolve, reject) {

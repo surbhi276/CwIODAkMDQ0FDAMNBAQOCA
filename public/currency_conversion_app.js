@@ -9,17 +9,21 @@
             scope.$apply();
         });
 
-        //Calculate and output the new amount
+        //Calculate and output the new currency rate
         scope.exchangeCurrency = function () {
             if (!(scope.fromCurrency && scope.toCurrency)) {
                 alert('Select both Currencies');
                 return;
             }
             $resource('/exchangeRates').save({ from: scope.fromCurrency, to: scope.toCurrency }, function (res) {
-                scope.showRate = res.result[0];
+                if (res.result[0] == 'err')
+                    scope.error = "Error caught while getting the rate";
+                else
+                    scope.showRate = res.result[0];
             });
         }
 
+        //calling every 5 second for live status of beanstalkd used tube
         scope.stats_tube = function () {
             $resource('/stats_tube').query({}, function (data) {
                 scope.stat_Tube_Data = data[0];
